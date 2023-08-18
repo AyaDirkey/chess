@@ -18,8 +18,9 @@ def clear():
     #scr.clear()
 
 #check if the target is empty or occupied by an enemy
+
 def check_terget(board, x1, y1, x2, y2):
-    if board[x2][y2]!=" ":
+    if board[x2][y2] != " ":
         if board[x1][y1].isupper() == board[x2][y2].isupper():
             return False
     return True
@@ -35,10 +36,10 @@ def clear_and_print(board):
 #-----------------------------------
 
 def check_inbetween_pieces (board,x1,y1,x2,y2):
-    x=x1
-    y=y1
-    dx=0
-    dy=0
+    x = x1
+    y = y1
+    dx = 0
+    dy = 0
     if x1 < x2:
         dx = 1
     elif x1 > x2:
@@ -53,22 +54,22 @@ def check_inbetween_pieces (board,x1,y1,x2,y2):
         y = y+dy
         if x == x2 and y == y2:
             return True
-        if board[x][y]!= " ":
+        if board[x][y] != " ":
             return False
 
 #-----------------------------------
 
 def rook(board,x1,y1,x2,y2):
     if check_terget(board, x1, y1, x2, y2):
-        if x1==x2 or y1==y2:
-            if bool(check_inbetween_pieces (board,x1,y1,x2,y2)):
+        if x1 == x2 or y1 == y2:
+            if bool(check_inbetween_pieces(board, x1, y1, x2, y2)):
                 return True
     return False
 
 def bishop(board,x1,y1,x2,y2):
     if check_terget(board, x1, y1, x2, y2):
-        if abs(x2-x1)==abs(y2-y1):
-            if bool(check_inbetween_pieces (board,x1,y1,x2,y2)):
+        if abs(x2-x1) == abs(y2-y1):
+            if bool(check_inbetween_pieces (board, x1, y1, x2, y2)):
                 return True
     return False
 
@@ -76,50 +77,49 @@ def knight(board,x1,y1,x2,y2):
     if check_terget(board, x1, y1, x2, y2):
         dx = x2 - x1
         dy = y2 - y1
-        if (abs(dx)==1 and abs(dy)==2) or (abs(dx)==2 and abs(dy)==1):
+        if (abs(dx) == 1 and abs(dy) == 2) or (abs(dx) == 2 and abs(dy) == 1):
             return True
     return False
 
 def queen(board,x1,y1,x2,y2):
-    if rook(board,x1,y1,x2,y2) or bishop(board,x1,y1,x2,y2):
+    if rook(board, x1, y1, x2, y2) or bishop(board, x1, y1, x2, y2):
         return True
     return False
 
 def king(board,x1,y1,x2,y2):
     dx = x2 - x1
     dy = y2 - y1
-    if (abs(dx)==1 and abs(dy)==0) or (abs(dx)==0 and abs(dy)==1) or (abs(dx)==1 and abs(dy)==1):
-        if queen(board,x1,y1,x2,y2):
+    if (abs(dx) == 1 and abs(dy) == 0) or (abs(dx) == 0 and abs(dy) == 1) or (abs(dx) == 1 and abs(dy) == 1):
+        if queen(board, x1, y1, x2, y2):
             return True
     return False
 
 def pawn(board,x1,y1,x2,y2):
-    if y2==y1:
+    if y2 == y1:
         if check_inbetween_pieces(board, x1, y1, x2, y2):
             if board[x2][y2] == " ":
                 if board[x1][y1].islower():
                     if x2 == x1 + 1:
                         return True
-                    elif x2 == x1 + 2 and x1 == 2:
+                    elif x2 == x1 + 2 and x1 == 1:
                         return True
-
                 else:
                     if x2 == x1 - 1:
                         return True
                     elif x2 == x1 - 2 and x1 == 6:
                         return True
-    #capture
-    elif abs(y2-y1) == 1 and abs(x2-x1) == 1:
-        if board[x2][y2] != " " and board[x2][y2].isupper() != board[x1][y1].isupper():
+    elif abs(y2-y1)==1 and abs(x2-x1)==1:
+        if board[x2][y2]!=" " and board[x2][y2].isupper()!=board[x1][y1].isupper():
             return True
     return False
 
 #-----------------------------------
 
 def check(turn, board):
-    check_move = None
+    check_move=None
     if turn == "black":
         k = "k"
+
     elif turn == "white":
         k = "K"
 
@@ -134,8 +134,8 @@ def check(turn, board):
         for column in range(8):
             cur = board[row][column]
             if cur != " ":
-                if (turn == "black" and cur.isupper) or (turn == "white" and cur.islower):
-                    cur = cur.lower()
+                if (turn == "black" and cur.isupper()) or (turn == "white" and cur.islower()):
+                    cur=cur.lower()
                     if cur == "p":
                         check_move = pawn
                     elif cur == "r":
@@ -152,13 +152,28 @@ def check(turn, board):
                         return True
     return False
 
-#------------------main-----------------
+#-----------------------------------
+enpassent = False
+xp = None
+yp = None
 
-initial_board=[["r","n","b","q","k","b","n","r"],
+def En_passent (turn, board, x2, y2):
+    if enpassent == True:
+        if x2 == xp and y2 == yp:
+            if turn == "black" and board[x2 - 1][y2] == "P":
+                board[x2 - 1][y2] = " "
+                board[x2][y2] = "P"
+            elif turn == "white" and board[x2 + 1][y2] == "p":
+                board[x2 + 1][y2] = " "
+                board[x2][y2] = "p"
+
+#-----------------------------------
+
+initial_board=[["r","n","b"," ","k","b","n","r"],
                ["p","p","p","p","p","p","p","p"],
                [" "," "," "," "," "," "," "," "],
                [" "," "," "," "," "," "," "," "],
-               [" "," "," "," "," "," "," "," "],
+               [" "," ","q"," "," "," "," "," "],
                [" "," "," "," "," "," "," "," "],
                ["P","P","P","P","P","P","P","P"],
                ["R","N","B","Q","K","B","N","R"]]
@@ -166,22 +181,25 @@ initial_board=[["r","n","b","q","k","b","n","r"],
 board=copy.deepcopy(initial_board)
 print_board(board)
 turn = "white"
-
 while True:
 
     test_board = copy.deepcopy(board)
-    # input cordinates
-    next_move=input("enter your next move: ")
+    # input coordinates
+    next_move = input("enter your next move: ")
     x1 = int(next_move[0]) - 1
     y1 = ord(str(next_move[1]).upper()) - 65
-    if next_move[2]==":":
+    if next_move[2] == ":":
         x2 = int(next_move[3]) - 1
         y2 = ord(str(next_move[4]).upper()) - 65
     else:
         x2 = int(next_move[2]) - 1
         y2 = ord(str(next_move[3]).upper()) - 65
 
-    piece = board[x1][y1]
+    if x1 > 7 or y1 > 7 or x2 > 7 or y2 > 7:
+        print("invalid coordinates")
+        continue
+    else:
+        piece = board[x1][y1]
 
     if turn == "white":
         if piece.islower():
@@ -193,11 +211,15 @@ while True:
             print("black to move")
             continue
 
+    if piece == " ":
+        print ("invalid move")
+        continue
+
     if piece.lower() == "p":
         check_move = pawn
 
     elif piece.lower() == "r":
-        check_move=rook
+        check_move = rook
 
     elif piece.lower() == "b":
         check_move = bishop
@@ -217,11 +239,23 @@ while True:
             print("invalid move due to check")
             continue
         else:
+            En_passent(turn, board, x2, y2)
             move(board, x1, y1, x2, y2, piece)
             clear_and_print(board)
     else:
         print("invalid move")
         continue
+
+    if piece == "p" and x2 == x1 + 2 and x1 == 1:
+        enpassent = True
+        xp = x2 - 1
+        yp = y2
+    elif piece == "P" and x2 == x1 - 2 and x1 == 6:
+        enpassent = True
+        xp = x2 + 1
+        yp = y2
+    else:
+        enpassent = False
 
     if turn == "white":
         turn = "black"
